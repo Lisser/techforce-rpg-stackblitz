@@ -1,12 +1,12 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
+import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
 
-import { Player } from '../common/interfaces';
+import { PartialPlayer, Player } from "../common/interfaces";
 
-import UserDialog from './UserDialog';
+import UserDialog from "./UserDialog";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -22,9 +22,10 @@ const useStyles = makeStyles(theme => ({
 
 interface AppBarProps {
   player?: Player;
+  updatePlayer: (player: PartialPlayer) => void;
 }
 
-export default function AppBarComponent({ player }: AppBarProps) {
+export default function AppBarComponent({ player, updatePlayer }: AppBarProps) {
   const classes = useStyles();
 
   return (
@@ -33,7 +34,9 @@ export default function AppBarComponent({ player }: AppBarProps) {
         <Typography variant="h6" className={classes.title}>
           TECHFORCE RPG
         </Typography>
-        {player && player ? <UserDialog player={player} /> : null}
+        {player && player ? (
+          <UserDialog player={player} updatePlayer={updatePlayer} />
+        ) : null}
       </Toolbar>
     </AppBar>
   );

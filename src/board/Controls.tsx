@@ -9,7 +9,6 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 
 import { MoveDirection, Player } from '../common/interfaces';
-import { attack, move, resetBoard } from '../api/game';
 
 const useStyles = makeStyles(theme => ({
   controls: {
@@ -35,21 +34,18 @@ const useStyles = makeStyles(theme => ({
 
 interface ControlsProps {
   player?: Player;
+  move: (direction: MoveDirection) => void;
 }
 
-export default function Controls({ player }: ControlsProps) {
+export default function Controls({ player, move }: ControlsProps) {
   const classes = useStyles();
 
   function onClickResetBoard() {
-    resetBoard();
+    // Don't touch this, admins only!
   }
 
   function onClickMove(direction: MoveDirection) {
-    move(direction);
-  }
-
-  async function dealDamage() {
-    attack();
+    // TODO: Implement moving the charactar
   }
 
   return (
@@ -75,7 +71,7 @@ export default function Controls({ player }: ControlsProps) {
             <KeyboardArrowRight />
           </IconButton>
           {player?.isAdmin ? <Button onClick={onClickResetBoard}>Reset board</Button> : null}
-          <Button onClick={dealDamage}>Attack!</Button>
+          {/* <Button onClick={attack}>Attack!</Button> */}
         </Box>
       </Box>
     </Box>

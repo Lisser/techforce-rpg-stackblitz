@@ -1,24 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { Box, ThemeProvider } from '@material-ui/core';
+import React, { useState } from "react";
+import { Box, ThemeProvider } from "@material-ui/core";
 
-import theme from './common/theme';
-import { BoardInterface, Player, PlayerDataStore } from './common/interfaces';
+import theme from "./common/theme";
+import { initialBoard } from "./common/generalVariables";
+import {
+  BoardInterface,
+  MoveDirection,
+  PartialPlayer,
+  Player
+} from "./common/interfaces";
 
-import Grid from './board/Grid';
-import AppBar from './header/AppBar';
-import Controls from './board/Controls';
-import { register, joinGame, subscribeToBoard, subscribeToPlayers, shutdown } from './api/game';
-import PlayerInfo from './board/PlayerInfo';
-
-const initialState: BoardInterface = { rows: [{ cells: [] }] };
+import Grid from "./board/Grid";
+import AppBar from "./header/AppBar";
+import Controls from "./board/Controls";
+import { joinGame } from "./api/game";
 
 export default function App() {
-  const [playerId, setPlayerId] = useState<string>('');
-  const [playerDataStore, setPlayerDataStore] = useState<PlayerDataStore>({});
-  const [board, setBoard] = useState<BoardInterface>(initialState);
+  const [player, setPlayer] = useState<Player>({
+    id: "42",
+    name: "super-bozz72",
+    color: "#2196f3"
+  });
+  const [board, setBoard] = useState<BoardInterface>(initialBoard);
 
-  const player: Player | undefined = playerDataStore && playerDataStore[playerId];
+  console.log(joinGame);
 
+  /*
+  // This is some boilerplate code to help you connect to the server
   useEffect(() => {
     subscribeToBoard(board => {
       setBoard(board);
@@ -50,19 +58,71 @@ export default function App() {
       joinGame(playerId);
     }
   }, [board, playerId]);
+  */
+
+  function movePlayer(direction: MoveDirection) {
+    let position = { x: 0, y: 0 };
+    board.rows.forEach((row, y) => {
+      row.cells.forEach((cell, x) => {
+        if (cell.userId === player.id) position = { x, y };
+      });
+    });
+
+    switch (direction) {
+      case MoveDirection.UP:
+        position.y--;
+        break;
+
+      case MoveDirection.DOWN:
+        position.y++;
+        break;
+
+      case MoveDirection.LEFT:
+        position.x--;
+        break;
+
+      case MoveDirection.RIGHT:
+        position.x++;
+        break;
+    }
+
+    // TODO: Validate if the new spot is actually a valid location
+
+    const newBoard = {
+      rows: board.rows.map((row, i) => ({
+        cells: row.cells.map((cell, j) => {
+          if (cell.userId !== "" && cell.userId !== player.id) {
+            return cell;
+          }
+          return {
+            ...cell,
+            userId: i === position.y && j === position.x ? player.id : ""
+          };
+        })
+      }))
+    };
+
+    setBoard(newBoard);
+  }
+
+  function updatePlayer(partialPlayer: PartialPlayer) {
+    setPlayer({
+      ...player,
+      ...partialPlayer
+    });
+  }
 
   return (
     <ThemeProvider theme={theme}>
       <Box className="root">
         <Box className="top">
-          <AppBar player={player} />
+          <AppBar player={player} updatePlayer={updatePlayer} />
         </Box>
         <Box display="flex" className="center" m={1}>
-          <Grid playerData={playerDataStore} board={board} />
+          <Grid player={player} board={board} />
         </Box>
         <Box className="bottom">
-          {player && <Controls player={player} />}
-          <PlayerInfo playerStore={playerDataStore} />
+          {player && <Controls player={player} move={movePlayer} />}
         </Box>
       </Box>
     </ThemeProvider>

@@ -1,5 +1,5 @@
-enum Obstacles {
-  ROCK = 'rock'
+export enum Obstacles {
+  ROCK = "rock"
 }
 
 export interface TileConfig {
@@ -20,10 +20,10 @@ export interface BoardCoordinate {
 }
 
 export enum MoveDirection {
-  UP = 'up',
-  DOWN = 'down',
-  LEFT = 'left',
-  RIGHT = 'right'
+  UP = "up",
+  DOWN = "down",
+  LEFT = "left",
+  RIGHT = "right"
 }
 
 export interface Player {
@@ -31,11 +31,6 @@ export interface Player {
   name: string;
   color: string;
   isAdmin?: boolean;
-
-  health: number;
-  attack: number;
-  speed: number;
-  range: number;
 }
 
 export interface PartialPlayer {
@@ -43,10 +38,6 @@ export interface PartialPlayer {
   name?: string;
   color?: string;
   isAdmin?: boolean;
-  health?: number;
-  attack?: number;
-  speed?: number;
-  range?: number;
 }
 
 export interface PlayerDataStore {
